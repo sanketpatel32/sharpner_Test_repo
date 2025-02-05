@@ -14,7 +14,7 @@ function handleFormSubmit(event) {
         email: email,
         phone: phone
     };
-    event.target.reset();
+
 
     localStorage.setItem(email, JSON.stringify(userDetails));
 
