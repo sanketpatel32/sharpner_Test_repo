@@ -2,7 +2,7 @@
 // Api so that we can change it whenever the links expire
 // https://crudcrud.com/
 
-let apiUrl = "https://crudcrud.com/api/79484b4bd9334d799ae54f188b82521c";
+let apiUrl = "https://crudcrud.com/api/d092dec870b64fdf8f565b9738e5bd2e";
 
 //To load the content of the page after Dom is loaded
 document.addEventListener('DOMContentLoaded', () => {
@@ -23,14 +23,30 @@ let handleFormSubmit = (e) => {
         table: table
     };
 
-    axios.post(`${apiUrl}/orders`, order)
-        .then(response => {
+    // axios.post(`${apiUrl}/orders`, order)
+    //     .then(response => {
+    //         console.log('Success:', response.data);
+    //         addOrderToTable(response.data);
+    //     })
+    //     .catch(error => {
+    //         console.error('Error:', error);
+    //     });
+
+    async function  postRequest() {
+        try {
+        let response = await axios.post(`${apiUrl}/orders`, order)   
             console.log('Success:', response.data);
-            addOrderToTable(response.data);
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+            addOrderToTable(response.data)
+            
+        }
+        catch {
+            error => {
+                console.error('Error:', error);
+            }
+        }
+    }
+    postRequest();
+        
 };
 
 // Fetching the orders from the api
