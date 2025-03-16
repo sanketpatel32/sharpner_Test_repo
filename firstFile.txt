@@ -1,3 +1,3 @@
 git add .
-git commit -m "Added Get Request with HTML"
+git commit -m "Added Get Request with HTML 2"
 git push
