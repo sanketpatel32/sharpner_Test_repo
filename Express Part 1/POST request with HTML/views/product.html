@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product Form</title>
+  </head>
+  <body>
+    <h2>Add a Product</h2>
+    <form onsubmit="submitHandler(event)">
+      <label for="product">Product Name:</label>
+      <input type="text" id="product" name="productName" required />
+      <button type="submit">Add Product</button>
+    </form>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="../public/js/product.js"></script>
+  </body>
+</html>
