@@ -1,3 +1,3 @@
 git add .
-git commit -m "Added realtions"
+git commit -m "Added Full Stack Expense App"
 git push
