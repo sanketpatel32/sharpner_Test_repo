@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="navigation">
+        <form id="attendanceForm">
+            <label for="date">Select a Date</label>
+            <input type="date" id="date" name="date" title="Select a date" placeholder="YYYY-MM-DD">
+            <button type="button" onclick="fetchAttendance()">Search</button>
+        </form>
+        
+        <button type="button" onclick="fetchAttendanceReport()">Fetch Attendance Report</button>
+    </div>
+    <div class="container" id="attendanceContainer"></div>
+</body>
+<script src="js/index.js" defer></script> <!-- Reference to the external JavaScript file -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</html>
