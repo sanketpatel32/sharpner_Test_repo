@@ -18,6 +18,13 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'index.html'));
 });
 
+app.get('/signup', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'signup.html'));
+});
+app.get('/login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'login.html'));
+});
+
 //Routes
 app.use('/user', userRoutes);
 

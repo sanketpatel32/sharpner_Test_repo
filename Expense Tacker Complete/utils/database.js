@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 
-const sequelize = new Sequelize('sharpner', 'root', 'root', {
+const sequelize = new Sequelize('expense', 'root', 'root', {
   dialect: 'mysql',
   host: 'localhost'
 });

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Expense Tracker App</title>
+  </head>
+  <body>
+    <h3>Signup for Expense Tracker</h3>
+    <form onsubmit="handleUserSignup(event)">
+      <label for="name">Enter your name</label>
+      <input type="text" name="name" id="name" required />
+      <label for="email">Enter your email</label>
+      <input type="email" name="email" id="email" required />
+      <label for="password">Enter your password</label>
+      <input type="password" name="password" id="password" required />
+      <button type="submit">Submit</button>
+    </form>
+    <p id="signupError" style="color: red;"></p> <!-- Error message will be displayed here -->
+    <a href="/login">Already have an account? Login</a>
+  </body>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="/js/signup.js"></script>
+</html>
