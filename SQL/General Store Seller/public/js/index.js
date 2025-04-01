@@ -23,14 +23,13 @@ document.getElementById('itemForm').addEventListener('submit', function(event) {
 });
 
 function addItemToList(item) {
-    const container = document.querySelector('.container');
+    const container = document.getElementsByClassName('container')[0];
     const itemDiv = document.createElement('div');
     itemDiv.innerHTML = `
         ${item.name} -- ${item.description} -- ${item.price}Rs -- ${item.quantity} --
         <button onclick="buyItem(${item.id}, 1)">Buy 1</button>
         <button onclick="buyItem(${item.id}, 2)">Buy 2</button>
         <button onclick="buyItem(${item.id}, 3)">Buy 3</button>
-        
     `;
     container.appendChild(itemDiv);
     container.appendChild(document.createElement('br'));
@@ -65,6 +64,7 @@ function buyItem(itemId, amount) {
         console.error('Error buying item:', error);
     });
 }
+
 
 // Fetch items when the page loads
 window.onload = fetchItems;

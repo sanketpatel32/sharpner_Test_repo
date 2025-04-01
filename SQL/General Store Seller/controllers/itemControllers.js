@@ -13,12 +13,16 @@ const addItem = (req, res) => {
 const removeItem = (req, res) => {
     const id = req.params.id;
     const amount = req.params.amount;
+    console.log(req.body)
     itemsModel.findByPk(id)
         .then((item) => {
-            if(item.quantity >= amount) {
+            if (item.quantity >= amount) {
                 item.quantity -= amount;
             }
-            else item.quantity = 0;
+            else {
+                itemsModel.destroy({ where: { id: id } });
+                // item.quantity = 0;
+            }
             return item.save();
         })
         .then(() => {
@@ -28,6 +32,7 @@ const removeItem = (req, res) => {
             res.status(500).send('Error removing item: ' + err);
         });
 }
+
 const getItem = (req, res) => {
     itemsModel.findAll()
         .then((items) => {
@@ -41,5 +46,6 @@ const getItem = (req, res) => {
 
 module.exports = {
     addItem,
-    removeItem,getItem
+    removeItem,
+    getItem,
 };

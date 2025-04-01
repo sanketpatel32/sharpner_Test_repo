@@ -18,11 +18,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'index.html'));
 });
+
 app.use('/items', itemRoutes);
 
 
-
-// Start the server
 sequelize.sync()
 .then(() => {
   app.listen(port, () => {

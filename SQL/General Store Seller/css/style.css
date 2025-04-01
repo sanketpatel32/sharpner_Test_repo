@@ -1,0 +1,16 @@
+.form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.input-group {
+    flex: 1 1 calc(25% - 10px); /* 25% width minus gap */
+    box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+    .input-group {
+        flex: 1 1 calc(50% - 10px); /* Adjust for smaller screens */
+    }
+}
