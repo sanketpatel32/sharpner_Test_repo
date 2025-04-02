@@ -1,6 +1,5 @@
 const userModel = require("../models/userModel");
-
-
+const bcrypt = require('bcrypt');
 
 const handleUserSignup = (req, res) => {
     const { name, email, password } = req.body;
@@ -10,9 +9,12 @@ const handleUserSignup = (req, res) => {
         .then(existingUser => {
             if (existingUser) {
                 res.status(409).json({ message: "User already exists" });
-                return null; 
+                return null;
             }
-            return userModel.create({ name, email, password });
+            // Hash the password before storing it
+            return bcrypt.hash(password, 10).then(hashedPassword => {
+                return userModel.create({ name, email, password: hashedPassword });
+            });
         })
         .then(newUser => {
             if (newUser) {
@@ -25,28 +27,31 @@ const handleUserSignup = (req, res) => {
         });
 };
 
-
 const handleUserLogin = (req, res) => {
     const { email, password } = req.body;
 
     userModel.findOne({ where: { email } })
-        .then((user) => {
+        .then(user => {
             if (!user) {
                 console.log("User not found");
                 return res.status(404).json({ error: "User not found" });
             }
 
-            if (user.password !== password) {
-                console.log("Incorrect password");
-                return res.status(401).json({ error: "Incorrect password" });
-            }
+            // Compare the hashed password
+            return bcrypt.compare(password, user.password).then(isMatch => {
+                if (!isMatch) {
+                    console.log("Incorrect password");
+                    return res.status(401).json({ error: "Incorrect password" });
+                }
 
-            console.log("User logged in successfully");
-            res.status(200).json({ message: "User logged in successfully", user });
+                console.log("User logged in successfully");
+                res.status(200).json({ message: "User logged in successfully", user });
+            });
         })
-        .catch((err) => {
+        .catch(err => {
             console.error("Error logging in user:", err);
             res.status(500).json({ error: "Internal server error" });
         });
 };
+
 module.exports = { handleUserLogin, handleUserSignup };
