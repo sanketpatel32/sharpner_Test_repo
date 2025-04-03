@@ -20,15 +20,6 @@ const expense = sequelize.define('expense', {
     category: {
         type: Sequelize.STRING,
         allowNull: false
-    },
-    userId: { 
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-            model: User, // Reference the user model
-            key: 'id'
-        },
-        onDelete: 'CASCADE' // Optional: Delete expenses if the user is deleted
     }
 }, { timestamps: false });
 

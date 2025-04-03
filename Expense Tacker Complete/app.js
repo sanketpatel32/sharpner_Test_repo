@@ -4,6 +4,11 @@ const cors = require('cors');
 const sequelize = require('./utils/database');
 const app = express();
 const port = 3000;
+const User = require('./models/userModel');
+const Expense = require('./models/expenseModel');
+
+User.hasMany(Expense, { foreignKey: 'userId', onDelete: 'CASCADE' });
+Expense.belongsTo(User, { foreignKey: 'userId' });
 
 const userRoutes = require('./routes/userRoutes');
 const expenseRoutes = require('./routes/expenseRoutes');

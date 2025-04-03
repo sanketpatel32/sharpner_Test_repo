@@ -2,14 +2,16 @@ const express = require('express');
 const path = require('path'); 
 const router = express.Router();
 const expenseController = require('../controllers/expenseController');
-const isAuth = require('../middleware/authMiddleware');
+const authenticateUser = require('../middleware/authMiddleware'); // Import JWT Middleware
 
-router.use(isAuth); 
+// Serve the Expense Page
 router.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname,'..' ,'views', 'addExpense.html'));
+  res.sendFile(path.join(__dirname, '..', 'views', 'addExpense.html'));
 });
-router.post('/add',expenseController.addExpense)
-router.get('/getAll', expenseController.getAllExpense);
-router.delete('/delete/:id', expenseController.deleteExpense);
+
+// Expense Routes with Authentication
+router.post('/add', authenticateUser, expenseController.addExpense);
+router.get('/getAll', authenticateUser, expenseController.getAllExpense);
+router.delete('/delete/:id', authenticateUser, expenseController.deleteExpense);
 
 module.exports = router;

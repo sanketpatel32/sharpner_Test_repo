@@ -7,6 +7,9 @@ const handleUserSignup = async (event) => {
     const password = document.getElementById("password").value.trim();
     const signupError = document.getElementById("signupError");
 
+    // Clear previous error message
+    signupError.textContent = "";
+
     const user = {
         name: name,
         email: email,
@@ -17,11 +20,14 @@ const handleUserSignup = async (event) => {
         const response = await axios.post(`${baseurl}/user/signup`, user);
         if (response.status === 201) {
             console.log("User created successfully");
-            window.location.href = "/expense"; 
+
+            const { token } = response.data; // Get JWT token
+            localStorage.setItem("token", token); // Store JWT in local storage
+
+            window.location.href = "/expense"; // Redirect to the expense page
         }
     } catch (error) {
         if (error.response) {
-            // Handle specific HTTP status codes
             if (error.response.status === 409) {
                 signupError.textContent = "Signup failed: User already exists.";
             } else if (error.response.status === 500) {

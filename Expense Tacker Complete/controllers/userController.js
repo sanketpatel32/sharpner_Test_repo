@@ -1,61 +1,56 @@
 const userModel = require("../models/userModel");
 const bcrypt = require('bcrypt');
-const { setUserEmail } = require('../utils/user');
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
-
-const handleUserSignup = (req, res) => {
+const handleUserSignup = async (req, res) => {
     const { name, email, password } = req.body;
 
-    // Check if the user already exists
-    userModel.findOne({ where: { email } })
-        .then(existingUser => {
-            if (existingUser) {
-                res.status(409).json({ message: "User already exists" });
-                return null;
-            }
-            // Hash the password before storing it
-            return bcrypt.hash(password, 10).then(hashedPassword => {
-                return userModel.create({ name, email, password: hashedPassword });
-            });
-        })
-        .then(newUser => {
-            if (newUser) {
-                setUserEmail(email);
-                res.status(201).json({ message: "User created successfully" });
-            }
-        })
-        .catch(err => {
-            console.error("Error during signup:", err);
-            res.status(500).json({ message: "Internal server error" });
-        });
+    try {
+        // Check if the user already exists
+        const existingUser = await userModel.findOne({ where: { email } });
+        if (existingUser) {
+            return res.status(409).json({ message: "User already exists" });
+        }
+
+        // Hash the password before storing it
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newUser = await userModel.create({ name, email, password: hashedPassword });
+
+        // Generate JWT token
+        const token = jwt.sign({ userId: newUser.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+        res.status(201).json({ message: "User created successfully", token });
+    } catch (err) {
+        console.error("Error during signup:", err);
+        res.status(500).json({ message: "Internal server error" });
+    }
 };
 
-const handleUserLogin = (req, res) => {
+const handleUserLogin = async (req, res) => {
     const { email, password } = req.body;
 
-    userModel.findOne({ where: { email } })
-        .then(user => {
-            if (!user) {
-                console.log("User not found");
-                return res.status(404).json({ error: "User not found" });
-            }
+    try {
+        const user = await userModel.findOne({ where: { email } });
 
-            // Compare the hashed password
-            return bcrypt.compare(password, user.password).then(isMatch => {
-                if (!isMatch) {
-                    console.log("Incorrect password");
-                    return res.status(401).json({ error: "Incorrect password" });
-                }
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
 
-                setUserEmail(email);
-                console.log("User logged in successfully");
-                res.status(200).json({ message: "User logged in successfully", user });
-            });
-        })
-        .catch(err => {
-            console.error("Error logging in user:", err);
-            res.status(500).json({ error: "Internal server error" });
-        });
+        // Compare the hashed password
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(401).json({ error: "Incorrect password" });
+        }
+
+        // Generate JWT token
+        const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+        res.status(200).json({ message: "User logged in successfully", token });
+    } catch (err) {
+        console.error("Error logging in user:", err);
+        res.status(500).json({ error: "Internal server error" });
+    }
 };
 
 module.exports = { handleUserLogin, handleUserSignup };

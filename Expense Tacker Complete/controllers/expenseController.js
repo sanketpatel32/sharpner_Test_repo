@@ -1,62 +1,53 @@
 const Expense = require('../models/expenseModel');
-const User = require('../models/userModel'); 
-const { setUserEmail, getUserEmail } = require('../utils/user'); 
 
-const addExpense = async(req, res) => {
-    const { amount, description, category } = req.body;
-    const userEmail = getUserEmail(req); // Get the user email from the request
-    try{
-        const user = await User.findOne({ where: { email: userEmail } });
-        if (!user) {
-            return res.status(404).json({ error: 'User not found' });
-        }
+const addExpense = async (req, res) => {
+    const { amount, description, category } = req.body;  
+    const userId = req.user.userId; // Extract userId from JWT
+
+    try {
         const expense = await Expense.create({
             amount,
             description,
             category,
-            userId: user.id // Use the email from the user object
-
+            userId 
         });
-        res.status(201).json({ message: 'Expense added successfully', expense });
 
-    }
-    catch (error) { 
+        res.status(201).json({ message: 'Expense added successfully', expense });
+    } catch (error) {
         console.error('Error adding expense:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
-}
+};
 
-const getAllExpense = async(req, res) => {
-    const userEmail = getUserEmail(req); // Get the user email from the request
+const getAllExpense = async (req, res) => {
+    const userId = req.user.userId; // Extract userId from JWT
+
     try {
-        const user = await User.findOne({ where: { email: userEmail } });
-        if (!user) {
-            return res.status(404).json({ error: 'User not found' });
-        }
-        const expenses = await Expense.findAll({ where: { userId: user.id } });
+        const expenses = await Expense.findAll({ where: { userId } });
         res.status(200).json({ expenses });
     } catch (error) {
         console.error('Error fetching expenses:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
-}
-const deleteExpense = async(req, res) => {
+};
+
+const deleteExpense = async (req, res) => {
     const { id } = req.params;
+    const userId = req.user.userId; // Extract userId from JWT
+
     try {
-        const expense = await Expense.findByPk(id);
+        const expense = await Expense.findOne({ where: { id, userId } });
+
         if (!expense) {
-            return res.status(404).json({ error: 'Expense not found' });
+            return res.status(404).json({ error: 'Expense not found or unauthorized' });
         }
+
         await expense.destroy();
         res.status(200).json({ message: 'Expense deleted successfully' });
     } catch (error) {
         console.error('Error deleting expense:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
-}
-
-module.exports = {
-    addExpense,
-    getAllExpense,
-    deleteExpense
 };
+
+module.exports = { addExpense, getAllExpense, deleteExpense };

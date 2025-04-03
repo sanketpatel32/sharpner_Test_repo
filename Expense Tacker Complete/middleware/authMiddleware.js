@@ -1,15 +1,21 @@
-const { getUserEmail } = require('../utils/user');
+const jwt = require("jsonwebtoken");
 
-const isAuthenticated = (req, res, next) => {
-    const email = getUserEmail(); // Get the logged-in user's email
-
-    if (!email) {
-        // If no email is set, block access
-        return res.status(401).json({ message: "Unauthorized: Please log in to access this resource" });
+const isAuth = (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        return res.status(401).json({ error: "No token provided" });
     }
 
-    // If email exists, proceed to the next middleware or route handler
-    next();
+    const token = authHeader.split(" ")[1]; // Extract token
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = decoded; // Attach decoded user info to request
+        next();
+    } catch (error) {
+        console.error("JWT Verification Error:", error.message);
+        return res.status(403).json({ error: "Invalid token" });
+    }
 };
 
-module.exports = isAuthenticated;
+module.exports = isAuth;

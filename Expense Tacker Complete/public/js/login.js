@@ -9,20 +9,16 @@ const handleUserLogin = async (event) => {
     // Clear previous error message
     loginError.textContent = "";
 
-    const user = {
-        email: email,
-        password: password
-    };
-
     try {
-        const response = await axios.post(`${baseurl}/user/login`, user);
+        const response = await axios.post(`${baseurl}/user/login`, { email, password });
+
         if (response.status === 200) {
-            console.log("User logged in successfully");
+            const { token } = response.data; // Get JWT token
+            localStorage.setItem("token", token); // Store JWT in local storage
             window.location.href = "/expense"; // Redirect to the home page
         }
     } catch (error) {
         if (error.response) {
-            // Handle specific HTTP status codes
             if (error.response.status === 404) {
                 loginError.textContent = "User not found. Please check your email.";
             } else if (error.response.status === 401) {
@@ -33,11 +29,9 @@ const handleUserLogin = async (event) => {
                 loginError.textContent = error.response.data.error || "An unexpected error occurred.";
             }
         } else if (error.request) {
-            // Handle no response from the server
             console.error("No response received:", error.request);
             loginError.textContent = "Unable to connect to the server. Please try again later.";
         } else {
-            // Handle other errors
             console.error("Error logging in:", error.message);
             loginError.textContent = "An unexpected error occurred. Please try again.";
         }
