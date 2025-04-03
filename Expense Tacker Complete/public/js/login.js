@@ -18,7 +18,7 @@ const handleUserLogin = async (event) => {
         const response = await axios.post(`${baseurl}/user/login`, user);
         if (response.status === 200) {
             console.log("User logged in successfully");
-            window.location.href = "/"; // Redirect to the home page
+            window.location.href = "/expense"; // Redirect to the home page
         }
     } catch (error) {
         if (error.response) {

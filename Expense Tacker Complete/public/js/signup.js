@@ -17,7 +17,7 @@ const handleUserSignup = async (event) => {
         const response = await axios.post(`${baseurl}/user/signup`, user);
         if (response.status === 201) {
             console.log("User created successfully");
-            window.location.href = "/"; 
+            window.location.href = "/expense"; 
         }
     } catch (error) {
         if (error.response) {

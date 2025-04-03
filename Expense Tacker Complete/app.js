@@ -4,7 +4,9 @@ const cors = require('cors');
 const sequelize = require('./utils/database');
 const app = express();
 const port = 3000;
+
 const userRoutes = require('./routes/userRoutes');
+const expenseRoutes = require('./routes/expenseRoutes');
 
 // Middleware
 app.use(express.json());
@@ -18,15 +20,9 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'index.html'));
 });
 
-app.get('/signup', (req, res) => {
-  res.sendFile(path.join(__dirname, 'views', 'signup.html'));
-});
-app.get('/login', (req, res) => {
-  res.sendFile(path.join(__dirname, 'views', 'login.html'));
-});
-
 //Routes
 app.use('/user', userRoutes);
+app.use('/expense', expenseRoutes);
 
 
 // Start the server
