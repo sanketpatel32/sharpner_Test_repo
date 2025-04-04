@@ -4,10 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Add Expense</title>
+    <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
   </head>
   <body>
     <form onsubmit="handleAddExpense(event)">
       <h2>Add Expense</h2>
+      <button type="button" id="renderBtn">Pay Now</button>
+      <br /><br />
       <label for="amount">Enter the amount</label>
       <input type="text" name="amount" id="amount" />
       <label for="description">Add description</label>
@@ -25,8 +28,9 @@
 
     <h2>All Expenses</h2>
     <ul id="expense-list"></ul>
-
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="/js/addExpense.js"></script>
   </body>
+
+  <script src="/js/cashfreeSelf.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="/js/addExpense.js"></script>
 </html>
