@@ -31,7 +31,7 @@ app.use('/user', userRoutes);
 app.use('/expense', expenseRoutes)
 app.use('/pay', paymentRoutes);
 
-sequelize.sync({force: true}) // Set force to true only for development/testing purposes
+sequelize.sync() // Set force to true only for development/testing purposes
 .then(() => {
   app.listen(port, () => {
     console.log(`Example app listening on port ${port}`);

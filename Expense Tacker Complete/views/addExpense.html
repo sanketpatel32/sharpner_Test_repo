@@ -9,7 +9,10 @@
   <body>
     <form onsubmit="handleAddExpense(event)">
       <h2>Add Expense</h2>
-      <button type="button" id="renderBtn">Pay Now</button>
+      <div id="premiumuser_container">
+        <button type="button" id="renderBtn">Pay Now</button>
+        <h3 id="premiumuser"></h3>
+      </div>
       <br /><br />
       <label for="amount">Enter the amount</label>
       <input type="text" name="amount" id="amount" />
@@ -28,6 +31,7 @@
 
     <h2>All Expenses</h2>
     <ul id="expense-list"></ul>
+    <div id = leaderboard_container></div>
   </body> 
   
   <script src="/js/cashfreeWeb_self.js"></script>             

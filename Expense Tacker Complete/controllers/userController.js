@@ -53,4 +53,21 @@ const handleUserLogin = async (req, res) => {
     }
 };
 
-module.exports = { handleUserLogin, handleUserSignup };
+const premiumUserCheck = async (req, res) => {
+    try {
+        const userId = req.user.userId; // Get user ID from JWT token
+        const user = await userModel.findByPk(userId);
+        console.log(user); // Debugging line
+
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        res.status(200).json({ isPremium: user.premiumUser });
+    } catch (err) {
+        console.error("Error checking premium user status:", err);
+        res.status(500).json({ error: "Internal server error" });
+    }
+};
+
+module.exports = { handleUserLogin, handleUserSignup,premiumUserCheck };

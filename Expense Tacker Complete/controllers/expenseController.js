@@ -50,4 +50,27 @@ const deleteExpense = async (req, res) => {
     }
 };
 
-module.exports = { addExpense, getAllExpense, deleteExpense };
+
+const sequelize = require("../utils/database"); // Import the Sequelize instance
+
+const getLeaderboard = async (req, res) => {
+  try {
+    const leaderboardData = await sequelize.query(
+      `
+      SELECT users.name, SUM(expenses.amount) AS totalExpense
+      FROM users
+      JOIN expenses ON users.id = expenses.userId
+      GROUP BY users.id
+      ORDER BY totalExpense DESC;
+      `,
+      { type: sequelize.QueryTypes.SELECT }
+    );
+
+    res.status(200).json(leaderboardData);
+  } catch (error) {
+    console.error("Error fetching leaderboard data:", error.message);
+    res.status(500).json({ message: "Error fetching leaderboard data" });
+  }
+};
+
+module.exports = { addExpense, getAllExpense, deleteExpense,getLeaderboard };

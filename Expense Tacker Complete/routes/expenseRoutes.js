@@ -13,5 +13,6 @@ router.get('/', (req, res) => {
 router.post('/add', authenticateUser, expenseController.addExpense);
 router.get('/getAll', authenticateUser, expenseController.getAllExpense);
 router.delete('/delete/:id', authenticateUser, expenseController.deleteExpense);
+router.get('/leaderboard',expenseController.getLeaderboard)
 
 module.exports = router;
