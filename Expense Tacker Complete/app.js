@@ -12,7 +12,7 @@ Expense.belongsTo(User, { foreignKey: 'userId' });
 
 const userRoutes = require('./routes/userRoutes');
 const expenseRoutes = require('./routes/expenseRoutes');
-const paymnetRoutes = require('./routes/paymentRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
 
 // Middleware
 app.use(express.json());
@@ -28,10 +28,10 @@ app.get('/', (req, res) => {
 
 //Routes
 app.use('/user', userRoutes);
-app.use('/expense', expenseRoutes);
-app.use('/pay',paymnetRoutes)
-// Start the server
-sequelize.sync()
+app.use('/expense', expenseRoutes)
+app.use('/pay', paymentRoutes);
+
+sequelize.sync({force: true}) // Set force to true only for development/testing purposes
 .then(() => {
   app.listen(port, () => {
     console.log(`Example app listening on port ${port}`);

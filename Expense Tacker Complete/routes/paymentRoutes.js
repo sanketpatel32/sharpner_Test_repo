@@ -1,8 +1,10 @@
 const express = require('express');
-const path = require('path'); 
 const router = express.Router();
+const {  processPayment, getPaymentStatus_ } = require('../controllers/paymentControllers');
 const authenticateUser = require('../middleware/authMiddleware'); // Import JWT Middleware
-const { createOrder } = require('../controllers/paymentController'); // Import Payment Controller
-// Expense Routes with Authentication
-router.post('/premium', createOrder );
+
+// router.get('/', getPaymentPage);
+router.post('/', authenticateUser,processPayment);
+router.get('/:orderId',getPaymentStatus_);
+
 module.exports = router;

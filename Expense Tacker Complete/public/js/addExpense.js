@@ -59,8 +59,6 @@ const handleAddExpense = (event) => {
         headers: { Authorization: `Bearer ${token}` }
     })
     .then((response) => {
-        console.log("Expense added successfully:", response.data);
-
         document.getElementById("amount").value = "";
         document.getElementById("description").value = "";
         document.getElementById("category").value = "food"; // Reset category
