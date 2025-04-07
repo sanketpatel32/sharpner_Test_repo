@@ -1,15 +1,18 @@
 const Expense = require('../models/expenseModel');
-
+const User = require('../models/userModel');
 const addExpense = async (req, res) => {
-    const { amount, description, category } = req.body;  
+    const { amount, description, category } = req.body;
     const userId = req.user.userId; // Extract userId from JWT
-
+    const numericAmount = parseFloat(amount);
     try {
+        const user = await User.findByPk(userId);
+        user.totalExpense += numericAmount;
+        await user.save(); // Save the updated user model
         const expense = await Expense.create({
-            amount,
+            amount : numericAmount,
             description,
             category,
-            userId 
+            userId
         });
 
         res.status(201).json({ message: 'Expense added successfully', expense });
@@ -54,23 +57,32 @@ const deleteExpense = async (req, res) => {
 const sequelize = require("../utils/database"); // Import the Sequelize instance
 
 const getLeaderboard = async (req, res) => {
-  try {
-    const leaderboardData = await sequelize.query(
-      `
-      SELECT users.name, SUM(expenses.amount) AS totalExpense
-      FROM users
-      JOIN expenses ON users.id = expenses.userId
-      GROUP BY users.id
-      ORDER BY totalExpense DESC;
-      `,
-      { type: sequelize.QueryTypes.SELECT }
-    );
+    //   try {
+    //     const leaderboardData = await sequelize.query(
+    //       `
+    //       SELECT users.name, SUM(expenses.amount) AS totalExpense
+    //       FROM users
+    //       JOIN expenses ON users.id = expenses.userId
+    //       GROUP BY users.id
+    //       ORDER BY totalExpense DESC;
+    //       `,
+    //       { type: sequelize.QueryTypes.SELECT }
+    //     );
 
+    //     res.status(200).json(leaderboardData);
+    //   } catch (error) {
+    //     console.error("Error fetching leaderboard data:", error.message);
+    //     res.status(500).json({ message: "Error fetching leaderboard data" });
+    //   }
+    const allUser = await User.findAll({ attributes: ['name', 'totalExpense'], order: [['totalExpense', 'DESC']] }); // Fetch all users and their total expenses
+
+    const leaderboardData = allUser.map(user => {
+        return {
+            name: user.name,
+            totalExpense: user.totalExpense
+        };
+    });
     res.status(200).json(leaderboardData);
-  } catch (error) {
-    console.error("Error fetching leaderboard data:", error.message);
-    res.status(500).json({ message: "Error fetching leaderboard data" });
-  }
 };
 
-module.exports = { addExpense, getAllExpense, deleteExpense,getLeaderboard };
+module.exports = { addExpense, getAllExpense, deleteExpense, getLeaderboard };

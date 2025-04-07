@@ -53,6 +53,7 @@ const handleUserLogin = async (req, res) => {
     }
 };
 
+
 const premiumUserCheck = async (req, res) => {
     try {
         const userId = req.user.userId; // Get user ID from JWT token
@@ -69,5 +70,7 @@ const premiumUserCheck = async (req, res) => {
         res.status(500).json({ error: "Internal server error" });
     }
 };
+
+
 
 module.exports = { handleUserLogin, handleUserSignup,premiumUserCheck };
