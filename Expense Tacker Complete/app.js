@@ -13,7 +13,7 @@ Expense.belongsTo(User, { foreignKey: 'userId' });
 const userRoutes = require('./routes/userRoutes');
 const expenseRoutes = require('./routes/expenseRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
-
+const passwordRoutes = require('./routes/passwordRoutes');
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -30,6 +30,7 @@ app.get('/', (req, res) => {
 app.use('/user', userRoutes);
 app.use('/expense', expenseRoutes)
 app.use('/pay', paymentRoutes);
+app.use('/password',passwordRoutes)
 
 sequelize.sync({force : false}) // Set force to true only for development/testing purposes
 .then(() => {
