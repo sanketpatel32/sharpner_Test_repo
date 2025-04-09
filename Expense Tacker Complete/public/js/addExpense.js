@@ -9,35 +9,66 @@ if (!token) {
 // Fetch and display all expenses
 const fetchExpenses = () => {
     axios.get(`${baseurl}/expense/getAll`, {
-        headers: { Authorization: `Bearer ${token}` } // Send token in headers
+        headers: { Authorization: `Bearer ${token}` }
     })
-        .then((response) => {
-            const expenses = response.data.expenses;
-            const expenseList = document.getElementById("expense-list");
+    .then((response) => {
+        const expenses = response.data.expenses;
+        const expenseList = document.getElementById("expense-list");
 
-            // Clear the existing list
-            expenseList.innerHTML = "";
+        // Build the HTML table layout
+        expenseList.innerHTML = `
+            <table id="expense-table" border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%; font-family: sans-serif;">
+                <thead style="background-color: #f0f0f0;">
+                    <tr>
+                        <th>Amount</th>
+                        <th>Description</th>
+                        <th>Category</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="expense-table-body"></tbody>
+            </table>
+        `;
 
-            // Render each expense
-            expenses.forEach((expense) => {
-                const listItem = document.createElement("li");
-                listItem.textContent = `Amount: ${expense.amount}, Description: ${expense.description}, Category: ${expense.category}`;
+        const tableBody = document.getElementById("expense-table-body");
 
-                // Create delete button
-                const deleteButton = document.createElement("button");
-                deleteButton.textContent = "Delete";
-                deleteButton.style.marginLeft = "10px";
-                deleteButton.onclick = () => deleteExpense(expense.id);
+        // Fill the table with expense data
+        expenses.forEach((expense) => {
+            const row = document.createElement("tr");
 
-                // Append delete button to the list item
-                listItem.appendChild(deleteButton);
-                expenseList.appendChild(listItem);
-            });
-        })
-        .catch((error) => {
-            console.error("Error fetching expenses:", error);
-            alert("Failed to fetch expenses. Please try again.");
+            const amountCell = document.createElement("td");
+            amountCell.textContent = expense.amount;
+
+            const descCell = document.createElement("td");
+            descCell.textContent = expense.description;
+
+            const categoryCell = document.createElement("td");
+            categoryCell.textContent = expense.category;
+
+            const actionCell = document.createElement("td");
+            const deleteButton = document.createElement("button");
+            deleteButton.textContent = "Delete";
+            deleteButton.style.backgroundColor = "#ff4d4d";
+            deleteButton.style.color = "white";
+            deleteButton.style.border = "none";
+            deleteButton.style.padding = "5px 10px";
+            deleteButton.style.cursor = "pointer";
+            deleteButton.onclick = () => deleteExpense(expense.id);
+
+            actionCell.appendChild(deleteButton);
+
+            row.appendChild(amountCell);
+            row.appendChild(descCell);
+            row.appendChild(categoryCell);
+            row.appendChild(actionCell);
+
+            tableBody.appendChild(row);
         });
+    })
+    .catch((error) => {
+        console.error("Error fetching expenses:", error);
+        alert("Failed to fetch expenses. Please try again.");
+    });
 };
 
 // Handle adding an expense
@@ -90,82 +121,103 @@ const checkPremiumUser = () => {
     axios.get(`${baseurl}/user/isPremium`, {
         headers: { Authorization: `Bearer ${token}` }
     })
-        .then((response) => {
-            const isPremium = response.data.isPremium; // Assuming the API returns { isPremium: true/false }
-            if (isPremium) {
-                const renderBtn = document.getElementById("renderBtn");
-                if (renderBtn) {
-                    renderBtn.style.display = "none"; // Hide the "Pay Now" button
-                }
-                const premiumMessage = document.getElementById("premiumuser");
-                if (premiumMessage) {
-                    premiumMessage.textContent = "You are a premium user! Enjoy unlimited access to all features.";
-                    premiumMessage.style.color = "green";
-                }
-                const container = document.getElementById("premiumuser_container");
-                if(container) {
-                    const showLeaderBoard = document.createElement("button");
-                    showLeaderBoard.type = "button";
-                    showLeaderBoard.textContent = "Show Leaderboard";
-                    showLeaderBoard.onclick = () => {
-                        axios.get(`${baseurl}/expense/leaderboard`)
-                        .then((response) => {
-                            const leaderboardData = response.data;
-                            const leaderboardContainer = document.getElementById("leaderboard_container");
-                            
-                            // Clear previous leaderboard data
-                            leaderboardContainer.innerHTML = "<h2>Leaderboard</h2>";
-                            
-                            // Create a table for the leaderboard
-                            const table = document.createElement("table");
-                            const headerRow = document.createElement("tr");
-                            
-                            const nameHeader = document.createElement("th");
-                            nameHeader.textContent = "Name";
-                            
-                            const totalExpenseHeader = document.createElement("th");
-                            totalExpenseHeader.textContent = "TotalExpense";
-                            
-                            headerRow.appendChild(nameHeader);
-                            headerRow.appendChild(totalExpenseHeader);
-                            table.appendChild(headerRow);
-                            
-                            // Populate the table with data
-                            leaderboardData.forEach((user) => {
-                                const row = document.createElement("tr");
-                                
-                                const nameCell = document.createElement("td");
-                                nameCell.textContent = user.name;
-                                
-                                const totalExpenseCell = document.createElement("td");
-                                totalExpenseCell.textContent = user.totalExpense;
-                                
-                                row.appendChild(nameCell);
-                                row.appendChild(totalExpenseCell);
-                                table.appendChild(row);
-                            });
-                            
-                            leaderboardContainer.appendChild(table);
-                            leaderboardContainer.style.display = "block"; // Show the leaderboard container
-                        })
-                        .catch((error) => {
-                            console.error("Error fetching leaderboard data:", error);
-                            alert("Failed to fetch leaderboard data. Please try again.");
-                        });
-                        
-                    }
-                    container.appendChild(showLeaderBoard);
-                }
+    .then((response) => {
+        const isPremium = response.data.isPremium;
+        if (isPremium) {
+            const renderBtn = document.getElementById("renderBtn");
+            if (renderBtn) {
+                renderBtn.style.display = "none";
             }
-            else {
+
+            const premiumMessage = document.getElementById("premiumuser");
+            if (premiumMessage) {
+                premiumMessage.textContent = "🌟 You are a premium user! Enjoy unlimited access to all features.";
+                premiumMessage.style.color = "green";
+            }
+
+            const container = document.getElementById("premiumuser_container");
+            if (container) {
+                const showLeaderBoard = document.createElement("button");
+                showLeaderBoard.type = "button";
+                showLeaderBoard.textContent = "Show Leaderboard";
+                showLeaderBoard.style.marginTop = "15px";
+                showLeaderBoard.style.padding = "8px 16px";
+                showLeaderBoard.style.backgroundColor = "#4CAF50";
+                showLeaderBoard.style.color = "white";
+                showLeaderBoard.style.border = "none";
+                showLeaderBoard.style.cursor = "pointer";
+
+                showLeaderBoard.onclick = () => {
+                    axios.get(`${baseurl}/expense/leaderboard`, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    })
+                    .then((response) => {
+                        const leaderboardData = response.data;
+                        const leaderboardContainer = document.getElementById("leaderboard_container");
+
+                        // Clear and set heading
+                        leaderboardContainer.innerHTML = "<h2>Leaderboard</h2>";
+
+                        // Create table
+                        const table = document.createElement("table");
+                        table.style.borderCollapse = "collapse";
+                        table.style.width = "100%";
+                        table.style.marginTop = "10px";
+                        table.style.fontFamily = "sans-serif";
+
+                        // Header row
+                        const headerRow = document.createElement("tr");
+                        headerRow.innerHTML = `
+                            <th style="background-color:#f0f0f0; padding:10px; border:1px solid #ddd;">Name</th>
+                            <th style="background-color:#f0f0f0; padding:10px; border:1px solid #ddd;">Total Expense</th>
+                        `;
+                        table.appendChild(headerRow);
+
+                        // Data rows
+                        leaderboardData.forEach(user => {
+                            const row = document.createElement("tr");
+                            row.innerHTML = `
+                                <td style="padding:10px; border:1px solid #ddd;">${user.name}</td>
+                                <td style="padding:10px; border:1px solid #ddd;">${user.totalExpense}</td>
+                            `;
+                            table.appendChild(row);
+                        });
+
+                        leaderboardContainer.appendChild(table);
+                        leaderboardContainer.style.display = "block";
+                    })
+                    .catch((error) => {
+                        console.error("Error fetching leaderboard data:", error);
+                        alert("Failed to fetch leaderboard data. Please try again.");
+                    });
+                };
+
+                container.appendChild(showLeaderBoard);
+            }
+            if(container){
+                const downloadBtn = document.createElement("button");
+                downloadBtn.type = "button";
+                downloadBtn.textContent = "Download Expenses";
+                downloadBtn.style.marginTop = "15px";
+                downloadBtn.style.padding = "8px 16px";
+                downloadBtn.style.backgroundColor = "#730316";
+                downloadBtn.style.color = "white";
+                downloadBtn.style.border = "none";
+                downloadBtn.style.cursor = "pointer";
+                console.log("Download Button Created");
+                container.appendChild(downloadBtn);
 
             }
-        })
-        .catch((error) => {
-            console.error("Error checking premium user status:", error);
-            alert("Failed to check user status. Please try again.");
-        });
+
+            
+        }
+    })
+    .catch((error) => {
+        console.error("Error checking premium user status:", error);
+        alert("Failed to check user status. Please try again.");
+    });
 };
+
 
 // Fetch expenses on page load
 window.onload = () => {
