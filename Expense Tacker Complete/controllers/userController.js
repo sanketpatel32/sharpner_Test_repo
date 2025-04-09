@@ -53,7 +53,6 @@ const handleUserLogin = async (req, res) => {
     }
 };
 
-
 const premiumUserCheck = async (req, res) => {
     try {
         const userId = req.user.userId; // Get user ID from JWT token
