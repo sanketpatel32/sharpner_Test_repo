@@ -6,7 +6,7 @@ if (!token) {
   window.location.href = "/login";
 }
 
-const EXPENSES_PER_PAGE = 5;
+let EXPENSES_PER_PAGE = parseInt(localStorage.getItem("expensesPerPage")) || 5;
 let currentPage = 1;
 let allExpenses = [];
 
@@ -22,6 +22,14 @@ const fetchExpenses = () => {
     console.error("Error fetching expenses:", error);
     alert("Failed to fetch expenses. Please try again.");
   });
+};
+
+const handleExpensesPerPageChange = () => {
+  const selectedValue = parseInt(document.getElementById("expensesPerPage").value);
+  EXPENSES_PER_PAGE = selectedValue;
+  localStorage.setItem("expensesPerPage", selectedValue);
+  currentPage = 1;
+  renderExpenses(allExpenses);
 };
 
 const renderExpenses = (expenses) => {
@@ -236,8 +244,13 @@ const checkPremiumUser = () => {
   });
 };
 
-// Run on load
 window.onload = () => {
+  const savedValue = localStorage.getItem("expensesPerPage");
+  if (savedValue) {
+    document.getElementById("expensesPerPage").value = savedValue;
+  }
+
   fetchExpenses();
   checkPremiumUser();
 };
+

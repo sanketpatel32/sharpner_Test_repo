@@ -60,8 +60,16 @@
     <button type="submit">Add</button>
   </form>
 
-  <div id="expense-list"></div> <!-- Table will be rendered here -->
+  <br />
+  <label for="expensesPerPage">Expenses per page:</label>
+  <select id="expensesPerPage" onchange="handleExpensesPerPageChange()">
+    <option value="2">2</option>
+    <option value="5" selected>5</option>
+    <option value="10">10</option>
+    <option value="20">20</option>
+  </select>
 
+  <div id="expense-list"></div> <!-- Table will be rendered here -->
   <div id="leaderboard_container"></div>
 
   <!-- Scripts -->
